@@ -15,7 +15,7 @@ class PlacedNumber() :
         self.numbers = self.updatePlaces()
 
     def __str__(self) : 
-        return str(self.value)
+        return str(self.value) + "," + str(self.place)
 
     def __repr__(self) : 
         return str(self)
@@ -32,10 +32,19 @@ class PlacedNumber() :
     def __le__(self, p) : 
         return self.value <= p.value
 
-    #calculates the PlacedNumber's *place*, or its sorted index
-    def calculatePlace(self) : 
+    def __int__(self) : 
+        import warnings
+        if type(self.value) == float : 
+            warnings.warn("Turning Float Value Into Int")
+        return int(self.value)
+    
+    def __float__(self) : 
+        return self.value
+
+    #calculates the PlacedNumber's *place*, or its sorted index in nums
+    def calculatePlace(self, nums = numbers) : 
         count = 0
-        for num in self.numbers : 
+        for num in nums : 
             if self.value > num.value : 
                 count += 1
         return count
@@ -51,40 +60,40 @@ class PlacedNumber() :
     def sortNumbers(nums) : 
         if type(nums[0]) is not None : 
             nums[0].updatePlaces()
-        while not nums.isSorted(nums) : 
+        while not PlacedNumber.isSorted(nums): 
             for num in nums : 
-                if not nums.isSorted() : 
-                    num.swapToPlace()
+                if not PlacedNumber.isSorted(nums) : 
+                    num.swapToPlace(nums)
                 else : 
                     return nums
         return nums
             
-
     #helper to sortNumbers, essentailly a garden variety swap.
-    def swapToPlace(self) : 
-        nums = self.numbers #for clarity and cleanliness
+    def swapToPlace(self, nums = numbers) : 
         index = nums.index(self)
         index2 = self.place
         k = nums[index2]
         nums[index2] = self
         nums[index] = k
+        return nums
 
     #when adding new PlacedNumbers, this function is called to make all the other numbers
     #know that their place may have changed, otherwise multiple (unequal) numbers
     #would be trying to get to the same place, or worse, be in wrong order.
-    @classmethod
-    def updatePlaces(cls) : 
-        for num in cls.numbers : 
+    @staticmethod
+    def updatePlaces(nums = numbers) : 
+        for num in nums : 
             num.place = num.calculatePlace()
-        return cls.numbers
+        return nums
     
     #used in sortNumbers() to check if the numbers in nums are sorted
     @staticmethod
-    def IsSorted(nums) : 
+    def isSorted(nums) : 
         for i in range(len(nums) - 1) :
             if nums[i] > nums[i+1] : 
                 return False
         return True
+
     
     #the following are nice functions to interact with standard objects
 
@@ -102,21 +111,27 @@ class PlacedNumber() :
     def convertListIntoPNs(nums) : 
         numbers = []
         for num in nums : 
-            numbers += PlacedObject(num)
+            y = PlacedNumber(num)
+            numbers.append(y)
         return numbers
     
     #takes PN list and returns a normal list
+    @staticmethod
     def convertPNsIntoList(nums) : 
         numbers = []
         for num in nums : 
-            numbers += num.value
+            numbers.append(num.value)
         return numbers
-            
+    
     #takes a garden variety list and sorts is using PN functionality
+    @staticmethod  
     def takeListAndSort(nums) : 
-        numbers = nums.convertListIntoPNs(nums)
-        numbers = sortNumbers(nums)
+        numbers = PlacedNumber.convertListIntoPNs(nums)
+        numbers = PlacedNumber.sortNumbers(numbers)
         return numbers
+
+
+
 
 
     
