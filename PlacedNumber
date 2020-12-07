@@ -6,13 +6,13 @@ class PlacedNumber() :
     #a list that keeps all of the PlacedNumbers that have been created,
     #so that they can be sorted
     numbers = []
-
+    checks = 0
     #typical instantiation
     def __init__(self, value) : 
         self.value = value
-        self.place = self.calculatePlace()
+        self.place = self.calculatePlace(self.numbers)
         self.numbers.append(self)
-        self.numbers = self.updatePlaces()
+        self.numbers = self.updatePlaces(self.numbers)
 
     def __str__(self) : 
         return str(self.value) + "," + str(self.place)
@@ -42,7 +42,8 @@ class PlacedNumber() :
         return self.value
 
     #calculates the PlacedNumber's *place*, or its sorted index in nums
-    def calculatePlace(self, nums = numbers) : 
+    def calculatePlace(self, nums) : 
+        self.count = 0
         count = 0
         for num in nums : 
             if self.value > num.value : 
@@ -59,7 +60,7 @@ class PlacedNumber() :
     @staticmethod
     def sortNumbers(nums) : 
         if type(nums[0]) is not None : 
-            nums[0].updatePlaces()
+            PlacedNumber.updatePlaces(nums)
         while not PlacedNumber.isSorted(nums): 
             for num in nums : 
                 if not PlacedNumber.isSorted(nums) : 
@@ -69,11 +70,11 @@ class PlacedNumber() :
         return nums
             
     #helper to sortNumbers, essentailly a garden variety swap.
-    def swapToPlace(self, nums = numbers) : 
+    def swapToPlace(self, nums) : 
         index = nums.index(self)
         index2 = self.place
         k = nums[index2]
-        nums[index2] = self
+        nums[index2] = nums[index]
         nums[index] = k
         return nums
 
@@ -81,18 +82,19 @@ class PlacedNumber() :
     #know that their place may have changed, otherwise multiple (unequal) numbers
     #would be trying to get to the same place, or worse, be in wrong order.
     @staticmethod
-    def updatePlaces(nums = numbers) : 
+    def updatePlaces(nums) : 
         for num in nums : 
-            num.place = num.calculatePlace()
+            num.place = num.calculatePlace(nums)
         return nums
     
     #used in sortNumbers() to check if the numbers in nums are sorted
-    @staticmethod
-    def isSorted(nums) : 
+    @classmethod
+    def isSorted(cls, nums) :
         for i in range(len(nums) - 1) :
             if nums[i] > nums[i+1] : 
                 return False
         return True
+        
 
     
     #the following are nice functions to interact with standard objects
@@ -109,32 +111,25 @@ class PlacedNumber() :
     #a list of PlacedNumbers.
     @staticmethod
     def convertListIntoPNs(nums) : 
-        numbers = []
+        numsPN = []
         for num in nums : 
             y = PlacedNumber(num)
-            numbers.append(y)
-        return numbers
+            numsPN.append(y)
+        return numsPN
     
     #takes PN list and returns a normal list
     @staticmethod
-    def convertPNsIntoList(nums) : 
-        numbers = []
-        for num in nums : 
-            numbers.append(num.value)
-        return numbers
+    def convertPNsIntoList(numsPN) : 
+        nums = []
+        for num in numsPN : 
+            nums.append(num.value)
+        return nums
+        
     
     #takes a garden variety list and sorts is using PN functionality
     @staticmethod  
     def takeListAndSort(nums) : 
-        numbers = PlacedNumber.convertListIntoPNs(nums)
-        numbers = PlacedNumber.sortNumbers(numbers)
-        return numbers
-
-
-
-
-
-    
-
-
-
+        nums = PlacedNumber.convertListIntoPNs(nums)
+        nums = PlacedNumber.sortNumbers(nums)
+        nums = PlacedNumber.convertPNsIntoList(nums)
+        return nums
