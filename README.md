@@ -3,5 +3,4 @@ A collection of all of my sorting algorithms, failed or succeeded.
 
 Current list: 
 
-
-pysort-v-0.py: a currently failed implementation of an interesting idea.
+PlacedNumber : A sorting system based around objects that find their own correct index
