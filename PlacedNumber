@@ -133,3 +133,9 @@ class PlacedNumber() :
         nums = PlacedNumber.sortNumbers(nums)
         nums = PlacedNumber.convertPNsIntoList(nums)
         return nums
+
+
+    
+
+
+
